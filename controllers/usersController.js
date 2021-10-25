@@ -17,6 +17,23 @@ exports.getUsers = async (req, res) => {
 // METHOD(POST) CREATE A USER => /API/USERS
 
 // METHOD(GET) GET USER BY ID => /API/USERS/:ID
+exports.getUser = async (req, res) => {
+  Users.findById(req.params.id)
+    .then((user) => {
+      if (!user) {
+        res.status(404).json({
+          message: "The user with the specified ID does not exist",
+        });
+      }
+      res.json(user);
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: "error getting user",
+        err: err.message,
+      });
+    });
+};
 
 // METHOD(DEL) DELETE A USER BY ID => /API/USERS/:ID
 
