@@ -16,7 +16,31 @@ exports.getUsers = async (req, res) => {
       });
     });
 };
+
 // METHOD(POST) CREATE A USER => /API/USERS
+exports.createUser = async (req, res) => {
+  const user = req.body;
+  // IF => ASSUMING THE CLIENT ENTERED THE USER INFORMATION INCORRECTLY
+  if (!user.name || !user.bio) {
+    // ERROR RESPONSE FOR CLIENT => 400 CLIENT SIDE ERROR
+    res.status(400).json({
+      message: "Please provide name and bio for the user",
+    });
+    // IF NOT => ASSUMING THE INFORMATION THE CLIENT ENTERED IS CORRECT, WE INSERT THE USER DATA
+  } else {
+    Users.insert(user)
+      .then((createdUser) => {
+        res.status(201).json(createdUser);
+      })
+      // ERROR RESPONSE FOR DEVELOPER => 500 INTERNAL SERVER ERROR
+      .catch((err) => {
+        res.status(500).json({
+          message: "error creating user",
+          err: err.message,
+        });
+      });
+  }
+};
 
 // METHOD(GET) GET USER BY ID => /API/USERS/:ID
 exports.getUser = async (req, res) => {
