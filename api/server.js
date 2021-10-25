@@ -12,4 +12,9 @@ dotenv.config({
 // BODY PARSER
 server.use(express.json());
 
+// IMPORTING ALL ROUTES
+const users = require("../routes/users");
+
+server.use("/api", users);
+
 module.exports = server; // EXPORT YOUR SERVER instead of {}
