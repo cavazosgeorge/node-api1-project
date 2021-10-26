@@ -54,7 +54,7 @@ exports.getUser = async (req, res) => {
           message: "The user with the specified ID does not exist",
         });
       }
-      // IF NOT => ASSUMING THE INFORMATION THE CLIENT ENTERED IS CORRECT, WE RETURN THE USER DATA
+      // IF NOT => ASSUMING THE INFORMATION THE CLIENT ENTERED IS CORRECT, RETURN THE USER DATA
       res.json(user);
     })
     // ERROR RESPONSE FOR DEVELOPER => 500 INTERNAL SERVER ERROR
@@ -67,6 +67,29 @@ exports.getUser = async (req, res) => {
 };
 
 // METHOD(DEL) DELETE A USER BY ID => /API/USERS/:ID
+exports.deleteUser = async (req, res) => {
+  try {
+    const possibleUser = await Users.findById(req.params.id);
+    // IF => ASSUMING THE CLIENT ENTERED THE USER INFORMATION INCORRECTLY
+    if (!possibleUser) {
+      res.status(404).json({
+        message: "The user with the specified ID does not exist",
+      });
+      // IF NOT => ASSUMING THE INFORMATION THE CLIENT ENTERED IS CORRECT, RETURN USER DATA
+    } else {
+      const deletedUser = await Users.remove(possibleUser.id);
+      res.status(200).json(deletedUser);
+      console.log(deletedUser);
+    }
+    // ERROR RESPONSE FOR DEVELOPER => 500 INTERNAL SERVER ERROR
+  } catch (err) {
+    res.status(500).json({
+      message: "error deleting user",
+      err: err.message,
+      stack: err.stack,
+    });
+  }
+};
 
 // METHOD(PUT) UPDATES A USERD BY ID => /API/USERS:ID
 exports.updateUser = async (req, res) => {
