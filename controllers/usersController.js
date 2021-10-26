@@ -45,7 +45,7 @@ exports.createUser = async (req, res) => {
 // METHOD(GET) GET USER BY ID => /API/USERS/:ID
 exports.getUser = async (req, res) => {
   Users.findById(req.params.id)
-    // .THEN WE RECIEVED WHAT IS SUPPOSED TO BE THE CORRECT USER DATA
+    // .THEN => WE RECIEVED WHAT IS SUPPOSED TO BE THE CORRECT USER DATA
     .then((user) => {
       // IF => ASSUMING THE CLIENT ENTERED THE USER INFORMATION INCORRECTLY
       if (!user) {
@@ -69,3 +69,32 @@ exports.getUser = async (req, res) => {
 // METHOD(DEL) DELETE A USER BY ID => /API/USERS/:ID
 
 // METHOD(PUT) UPDATES A USERD BY ID => /API/USERS:ID
+exports.updateUser = async (req, res) => {
+  try {
+    const possibleUser = await Users.findById(req.params.id);
+    // IF => ASSUMING THE CLIENT ENTERED THE USER INFORMATION INCORRECTLY
+    if (!possibleUser) {
+      res.status(404).json({
+        message: "The user with the speicifed ID does not exist",
+      });
+    } else {
+      // IF => ASSUMING THE CLIENT ENTERED THE USER INFORMATION INCORRECTLY
+      if (!req.body.name || !req.body.bio) {
+        res.status(400).json({
+          message: "Please provide name and bio for the user",
+        });
+        // IF NOT => ASSUMING THE INFORMATION THE CLIENT ENTERED IS CORRECT, WE RETURN THE UPDATED USER DATA
+      } else {
+        const updatedUser = await Users.update(req.params.id, req.body);
+        res.status(200).json(updatedUser);
+      }
+    }
+    // ERROR RESPONSE FOR DEVELOPER => 500 INTERNAL SERVER ERROR
+  } catch (err) {
+    res.status(500).json({
+      message: "error updating user",
+      err: err.message,
+      stack: err.stack,
+    });
+  }
+};
